@@ -1,0 +1,25 @@
+{
+  "version": 2,
+  "rewrites": [
+    {
+      "source": "/",
+      "destination": "/api/index?route=home"
+    },
+    {
+      "source": "/configure",
+      "destination": "/api/index?route=configure"
+    },
+    {
+      "source": "/:rdKey/manifest.json",
+      "destination": "/api/index?route=manifest&rdKey=:rdKey"
+    },
+    {
+      "source": "/:rdKey/stream/:type/:id.json",
+      "destination": "/api/index?route=stream&rdKey=:rdKey&type=:type&id=:id"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/api/index?route=home"
+    }
+  ]
+}

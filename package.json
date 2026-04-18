@@ -1,0 +1,7 @@
+{
+  "name": "stremio-debrid-vercel",
+  "private": true,
+  "engines": {
+    "node": "20.x"
+  }
+}
