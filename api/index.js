@@ -32,14 +32,12 @@ function buildManifest(rdKey) {
   return {
     id: `id.my.normansyarif.stremiolinks.${hashKey(rdKey)}`,
     version: MANIFEST_VERSION,
-    name: "Debrid",
+    name: "RealDebrid",
     description: "Get streaming links",
     catalogs: [],
     resources: ["stream"],
     types: ["movie", "series"],
     idPrefixes: ["tt"],
-    background: "https://i.imgur.com/t8wVwcg.jpg",
-    logo: "https://addon.syf.my.id/images/play.jpg",
     behaviorHints: {
       configurable: true,
     },
