@@ -62,16 +62,13 @@ function parseSize(title) {
 function transformStream(stream) {
   const rawName = stream.name ?? "";
   const rawTitle = stream.title ?? "";
-  let quality = "";
-  let isRealDebrid = false;
-  let isWaiting = false;
+  const normalizedName = rawName.toLowerCase();
+  let formattedName = "Source";
 
-  if (rawName.toLowerCase().includes("[TB+]")) {
-    isRealDebrid = true;
-    quality = rawName.replace(/^[\s\S]*\n/, "");
-  } else if (rawName.toLowerCase().includes("[TB download]")) {
-    isRealDebrid = true;
-    isWaiting = true;
+  if (normalizedName.includes("[tb+]")) {
+    formattedName = rawName.replace(/\[TB\+\]\s*Torrentio/i, "Fast ⚡");
+  } else if (normalizedName.includes("[tb download]")) {
+    formattedName = rawName.replace(/\[TB download\]\s*Torrentio/i, "Download ⬇️");
   }
 
   const fileInfo = rawTitle.match(
@@ -85,17 +82,7 @@ function transformStream(stream) {
   const peers = peerMatch?.[1] ?? "";
   const languages = audioMatch?.[1] ?? "";
 
-  const formattedName = isRealDebrid
-    ? isWaiting
-      ? "Download ⏳"
-      : "Instant ⚡"
-    : "Source";
-
   let formattedTitle = "";
-
-  if (quality) {
-    formattedTitle += `📺 ${quality}\n`;
-  }
 
   if (fileSize) {
     formattedTitle += `💾 ${fileSize}\n`;
@@ -128,17 +115,19 @@ function sortStreams(a, b) {
   const aTitle = a.title ?? "";
   const bTitle = b.title ?? "";
 
-  const aHasInstant = aName.includes("Instant ⚡");
-  const bHasInstant = bName.includes("Instant ⚡");
-  if (aHasInstant && !bHasInstant) {
+  const aHasFast = aName.includes("Fast ⚡");
+  const bHasFast = bName.includes("Fast ⚡");
+  if (aHasFast && !bHasFast) {
     return -1;
   }
-  if (!aHasInstant && bHasInstant) {
+  if (!aHasFast && bHasFast) {
     return 1;
   }
 
-  const aIs1080 = aTitle.includes("1080p");
-  const bIs1080 = bTitle.includes("1080p");
+  const aSearchText = `${aName}\n${aTitle}`;
+  const bSearchText = `${bName}\n${bTitle}`;
+  const aIs1080 = aSearchText.includes("1080p");
+  const bIs1080 = bSearchText.includes("1080p");
   if (aIs1080 && !bIs1080) {
     return -1;
   }
@@ -152,8 +141,8 @@ function sortStreams(a, b) {
     }
   }
 
-  const aIs720 = aTitle.includes("720p");
-  const bIs720 = bTitle.includes("720p");
+  const aIs720 = aSearchText.includes("720p");
+  const bIs720 = bSearchText.includes("720p");
   if (aIs720 && !bIs720) {
     return -1;
   }
