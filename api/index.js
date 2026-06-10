@@ -59,10 +59,20 @@ function parseSize(title) {
   return size;
 }
 
+function getSortableSize(stream) {
+  const videoSize = stream.behaviorHints?.videoSize;
+  if (typeof videoSize === "number" && Number.isFinite(videoSize) && videoSize > 0) {
+    return videoSize / (1024 * 1024);
+  }
+
+  return parseSize(stream.title ?? "");
+}
+
 function transformStream(stream) {
   const rawName = stream.name ?? "";
   const rawTitle = stream.title ?? "";
   const normalizedName = rawName.toLowerCase();
+  const hasVideoSize = stream.behaviorHints?.videoSize != null;
   let formattedName = "Source";
 
   if (normalizedName.includes("[tb+]")) {
@@ -84,7 +94,7 @@ function transformStream(stream) {
 
   let formattedTitle = "";
 
-  if (fileSize) {
+  if (fileSize && !hasVideoSize) {
     formattedTitle += `💾 ${fileSize}\n`;
   }
 
@@ -135,7 +145,7 @@ function sortStreams(a, b) {
     return 1;
   }
   if (aIs1080 && bIs1080) {
-    const sizeDelta = parseSize(aTitle) - parseSize(bTitle);
+    const sizeDelta = getSortableSize(a) - getSortableSize(b);
     if (sizeDelta !== 0) {
       return sizeDelta;
     }
@@ -150,7 +160,7 @@ function sortStreams(a, b) {
     return 1;
   }
   if (aIs720 && bIs720) {
-    const sizeDelta = parseSize(bTitle) - parseSize(aTitle);
+    const sizeDelta = getSortableSize(b) - getSortableSize(a);
     if (sizeDelta !== 0) {
       return sizeDelta;
     }
