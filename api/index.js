@@ -2,7 +2,7 @@ const crypto = require("node:crypto");
 
 const MANIFEST_VERSION = "2.0.0";
 const TORRENTIO_BASE =
-  "https://torrentio.strem.fun/sort=qualitysize%7Cqualityfilter=threed,4k,scr,cam%7Csizefilter=8GB,1.5GB%7Crealdebrid=";
+  "https://torrentio.strem.fun/sort=qualitysize%7Cqualityfilter=threed,4k,scr,cam%7Csizefilter=8GB,1.5GB%7Ctorbox=";
 
 function setCorsHeaders(res) {
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -32,7 +32,7 @@ function buildManifest(rdKey) {
   return {
     id: `id.my.normansyarif.stremiolinks.${hashKey(rdKey)}`,
     version: MANIFEST_VERSION,
-    name: "RealDebrid",
+    name: "Torbox",
     description: "Get streaming links",
     catalogs: [],
     resources: ["stream"],
@@ -66,10 +66,10 @@ function transformStream(stream) {
   let isRealDebrid = false;
   let isWaiting = false;
 
-  if (rawName.toLowerCase().includes("[rd+]")) {
+  if (rawName.toLowerCase().includes("[TB+]")) {
     isRealDebrid = true;
     quality = rawName.replace(/^[\s\S]*\n/, "");
-  } else if (rawName.toLowerCase().includes("[rd download]")) {
+  } else if (rawName.toLowerCase().includes("[TB download]")) {
     isRealDebrid = true;
     isWaiting = true;
   }
@@ -294,10 +294,10 @@ function buildHomePage(origin) {
 <body>
   <main class="panel">
     <h1>Debrid Addon</h1>
-    <p>Install this Stremio addon by placing your Real-Debrid API key in the URL path. The key is never bundled into client-side code and is not hardcoded into the deployment.</p>
+    <p>Install this Stremio addon by placing your Torbox API key in the URL path. The key is never bundled into client-side code and is not hardcoded into the deployment.</p>
     <form id="config-form">
       <div class="row">
-        <input id="rd-key" type="password" placeholder="Paste your Real-Debrid API key" autocomplete="off" required>
+        <input id="rd-key" type="password" placeholder="Paste your Torbox API key" autocomplete="off" required>
         <button type="submit">Build URL</button>
       </div>
     </form>
@@ -362,7 +362,7 @@ module.exports = async (req, res) => {
 
   if (!rdKey) {
     sendJson(res, 400, {
-      error: "Missing Real-Debrid key in URL path",
+      error: "Missing Torbox key in URL path",
       example: `${origin}/YOUR_RD_KEY/manifest.json`,
     });
     return;
